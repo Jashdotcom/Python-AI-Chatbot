@@ -11,24 +11,31 @@ client = OpenAI(
     base_url="https://openrouter.ai/api/v1"
 )
 
+messages = []
+
 while True:
     question = input("\nYou: ")
 
     if question.lower() == "exit":
-        print("Goodbye!")
+        print("\nAI: Goodbye!")
         break
+
+    messages.append({
+        "role": "user",
+        "content": question
+    })
 
     response = client.chat.completions.create(
         model="anthropic/claude-sonnet-4.6",
-        messages = [
-            {
-                "role": "user",
-                "content": question
-            }
-        ],
+        messages = messages,
         max_tokens=500
     )
     answer = response.choices[0].message.content
+
+    messages.append({
+        "role": "assistant",
+        "content": answer
+    })
     print("\nAI: ", answer)
 
 
