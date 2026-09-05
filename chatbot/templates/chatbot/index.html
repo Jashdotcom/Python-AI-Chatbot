@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Chatbot</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #chat-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .user {
+            text-align: right;
+        }
+
+        .assistant {
+            text-align: left;
+        }
+
+        #input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px;
+        }
+
+        button {
+            padding: 12px 20px;
+            cursor: pointer;
+        }
+
+        #loading {
+            display: none;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>AI Chatbot 🤖</h1>
+
+    <div id="chat-box"></div>
+
+    <div id="loading">
+        AI is thinking...
+    </div>
+
+    <div id="input-area">
+        <input
+            type="text"
+            id="message-input"
+            placeholder="Ask something..."
+        >
+
+        <button onclick="sendMessage()">
+            Send
+        </button>
+    </div>
+
+
+    <script>
+
+        const messages = [
+            {
+                role: "system",
+                content: "You are a helpful AI assistant. Explain technical concepts in simple language."
+            }
+        ];
+
+
+        async function sendMessage() {
+
+            const input = document.getElementById("message-input");
+            const question = input.value.trim();
+
+            if (!question) {
+                return;
+            }
+
+            addMessage("You", question);
+
+            input.value = "";
+
+            messages.push({
+                role: "user",
+                content: question
+            });
+
+            document.getElementById("loading").style.display = "block";
+
+
+            try {
+
+                const response = await fetch("/api/chat/", {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        messages: messages
+                    })
+                });
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Something went wrong.");
+                }
+
+
+                const answer = data.answer;
+
+
+                messages.push({
+                    role: "assistant",
+                    content: answer
+                });
+
+
+                addMessage("AI", answer);
+
+            }
+
+            catch (error) {
+
+                addMessage(
+                    "Error",
+                    error.message
+                );
+
+            }
+
+            finally {
+
+                document.getElementById("loading").style.display = "none";
+
+            }
+        }
+
+
+        function addMessage(sender, message) {
+
+            const chatBox = document.getElementById("chat-box");
+
+            const messageElement = document.createElement("div");
+
+            messageElement.classList.add("message");
+
+            if (sender === "You") {
+                messageElement.classList.add("user");
+            }
+            else {
+                messageElement.classList.add("assistant");
+            }
+
+            messageElement.innerHTML = `
+                <strong>${sender}:</strong>
+                <p>${message}</p>
+            `;
+
+            chatBox.appendChild(messageElement);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+    </script>
+
+</body>
+
+</html>
