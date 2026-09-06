@@ -4,10 +4,16 @@ pdf_path = "documents/college_rules.pdf"
 
 reader = PdfReader(pdf_path)
 
-print("Number of pages: ", len(reader.pages))
+all_text=""
 
 for page_number, page in enumerate(reader.pages, start=1):
     text = page.extract_text()
 
-    print(f"\n---Page {page_number} ---")
-    print(text)
+    if text:
+        all_text += text + "\n"
+
+print("Number of pages: ", len(reader.pages))
+print("\nExtracted text: ")
+print(all_text)
+
+        
