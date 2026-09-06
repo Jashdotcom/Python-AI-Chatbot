@@ -25,5 +25,10 @@ collection.add(
     ids = ids
 )
 
-print("Documents added successfully!")
-print("Number of documents: ",collection.count())
+results = collection.query(
+    query_texts = ["What attendance is required?"],
+    n_results = 2
+)
+
+print("\nSearch results:")
+print(results["documents"])
