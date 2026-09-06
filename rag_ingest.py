@@ -50,7 +50,6 @@ collection = client.get_or_create_collection(
 ids = []
 
 for i in range(len(chunks)):
-
     ids.append(f"chunk_{i}")
 
 
