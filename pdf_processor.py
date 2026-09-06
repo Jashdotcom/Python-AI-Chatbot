@@ -17,10 +17,11 @@ print("\nExtracted text: ")
 print(all_text)
 
 chunk_size = 1000
+overlap = 200
 
 chunks = []
 
-for i in range(0, len(all_text), chunk_size):
+for i in range(0, len(all_text), chunk_size - overlap):
     chunk = all_text[i:i + chunk_size]
     chunks.append(chunk)
 
